@@ -1,0 +1,28 @@
+org: ceedee666
+app: abap-keyword-bot
+service: abap-keyword-bot
+
+frameworkVersion: "3"
+
+configValidationMode: error
+
+provider:
+  name: aws
+  runtime: python3.9
+
+functions:
+  bot:
+    handler: bot.toot
+    environment:
+      ACCESS_TOKEN: ${param:access_token}
+      API_URL: ${param:api_url}
+    timeout: 20
+    events:
+      - schedule: cron(0 2/4 * * ? *)
+
+plugins:
+  - serverless-python-requirements
+
+custom:
+  pythonRequirements:
+    usePipenv: false
