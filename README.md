@@ -11,7 +11,7 @@ _I'm using https://mastodon.social in the examples but of course you can and sho
 
 You will need the following tools installed and configured
 
-- Pythoon >= 3.9
+- Python >= 3.9
 - Serverless (https://www.serverless.com/)
 - AWS CLI (and a working AWS account, obviously)
 
