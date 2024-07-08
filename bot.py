@@ -21,7 +21,7 @@ def toot_text():
     return f"The next random #ABAP keyword is: \n\n   {keyword['heading']} \n\nWant to learn more? See: {keyword['url']}."
 
 
-def toot(event, context):
+def toot():
     logger.info("Trying to toot...")
 
     headers = {"Authorization": f"Bearer {ACCESS_TOKEN}"}
@@ -35,3 +35,6 @@ def toot(event, context):
         logger.info(f"Tooted successfully: {status}")
 
     return r.status_code, r.text
+
+if __name__ == '__main__': 
+    toot()
