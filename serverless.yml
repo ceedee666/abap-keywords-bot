@@ -2,8 +2,6 @@ org: ceedee666
 app: abap-keyword-bot
 service: abap-keyword-bot
 
-frameworkVersion: "3"
-
 configValidationMode: error
 
 provider:
@@ -18,7 +16,7 @@ functions:
       API_URL: ${param:api_url}
     timeout: 20
     events:
-      - schedule: cron(0 2/4 * * ? *)
+      - schedule: cron(0 0/6 * * ? *)
 
 plugins:
   - serverless-python-requirements
