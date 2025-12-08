@@ -7,7 +7,7 @@ import requests
 from bs4 import BeautifulSoup
 
 BASE_URL = "https://help.sap.com/doc/abapdocu_latest_index_htm/latest/en-US/"
-INDEX_PAGE = "abenabap_index.htm"
+INDEX_PAGE = "ABENABAP_INDEX.html"
 
 
 logger = logging.getLogger(__name__)
