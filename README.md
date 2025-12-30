@@ -14,7 +14,8 @@ but of course you can and should pick the instance of your choice._
 
 You will need the following tools installed and configured
 
-- Python >= 3.14
+- Python >= 3.10
+- Poetry
 
 ## Usage
 
