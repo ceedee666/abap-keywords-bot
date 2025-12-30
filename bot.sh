@@ -7,4 +7,4 @@ cd "$parent_path"
 
 source ".env"
 
-python3 bot.py
+poetry run python3 bot.py
