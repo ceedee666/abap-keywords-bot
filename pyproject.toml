@@ -1,0 +1,22 @@
+[project]
+name = "abap-keyword-bot"
+version = "0.1.0"
+description = ""
+authors = [{ name = "Christian Drumm", email = "christian.drumm@hey.com" }]
+readme = "README.md"
+requires-python = ">=3.14"
+dependencies = ["click (>=8.3.1,<9.0.0)", "requests (>=2.32.5,<3.0.0)", "beautifulsoup4 (>=4.14.3,<5.0.0)"]
+
+
+[build-system]
+requires = ["poetry-core>=2.0.0,<3.0.0"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry]
+package-mode = false
+
+[dependency-groups]
+dev = [
+    "black (>=25.12.0,<26.0.0)",
+    "debugpy (>=1.8.19,<2.0.0)"
+]
