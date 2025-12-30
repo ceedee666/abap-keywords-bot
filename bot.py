@@ -18,7 +18,7 @@ def toot_text():
 
     keyword = choice(keywords)
 
-    return f"The next random #ABAP keyword is: \n\n   {keyword['heading']} \n\nWant to learn more? See: {keyword['url']}."
+    return f"The next random #ABAP keyword is: \n\n   {keyword['title']} \n\nWant to learn more? See: {keyword['url']}."
 
 
 def toot():
@@ -36,5 +36,6 @@ def toot():
 
     return r.status_code, r.text
 
-if __name__ == '__main__': 
+
+if __name__ == "__main__":
     toot()

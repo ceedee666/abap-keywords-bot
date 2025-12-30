@@ -18,32 +18,68 @@ def abap_keyword_pages():
     logger.info("Getting list of ABAP keyword pages from index")
 
     r = requests.get(BASE_URL + INDEX_PAGE)
-    page = BeautifulSoup(r.text, "html.parser")
+    r.raise_for_status()
 
-    elements = page.find_all("a", href=re.compile("call_link"))
+    # Find the script containing the oModel data
+    soup = BeautifulSoup(r.text, "html.parser")
+    scripts = soup.find_all("script")
 
-    elements = set(elements)
-    logger.info(f"Found {len(elements)} unique keywords")
+    raw_data = ""
+    for script in scripts:
+        if script.string and "new sap.ui.model.json.JSONModel" in script.string:
+            raw_data = script.string
+            break
 
-    return [e["href"].split("'")[1] for e in elements]
+    if not raw_data:
+        logger.error("Could not find the JavaScript model data on the page.")
+        return []
+
+    # Extract HTML fragments from the JS Model
+    # These are stored as keys: ul1, ul2, par1 etc. followed by HTML in quotes
+    # The regex captures the content between the double quotes for these keys
+    html_fragments = re.findall(r'(?:ul\d+|par\d+)\s*:\s*"(.*?)"', raw_data)
+
+    unique_hrefs = set()
+
+    for fragment in html_fragments:
+        clean_html = fragment.replace('\\"', '"').replace("\\ ", "")
+
+        frag_soup = BeautifulSoup(clean_html, "html.parser")
+
+        links = frag_soup.find_all("a", attrs={"target": "_parent"})
+
+        for link in links:
+            href = link.get("href")
+            if href:
+                unique_hrefs.add(href)
+
+    logger.info(f"Found {len(unique_hrefs)} unique keyword pages")
+    return list(unique_hrefs)
 
 
 def parse_keyword_page(path, base_url=BASE_URL):
     logger.info(f"Parsing keyword page: {path}")
 
     url = base_url + path
-    r = requests.get(url)
-    keyword_page = BeautifulSoup(r.text, "html.parser")
+    try:
+        r = requests.get(url)
+        r.raise_for_status()
 
-    h1 = keyword_page.find("span", "h1")
+        keyword_page = BeautifulSoup(r.text, "html.parser")
 
-    if h1 is None:
-        logger.warning(f"Could not find h1 on page: {url}")
+        title_tag = keyword_page.find("title")
+        if title_tag:
+            full_title = title_tag.get_text().strip()
+            title = full_title.split("|")[0].strip()
+            logger.info(f"Found title: {title} at {url}")
+            return title, url
+        else:
+            logger.warning(f"Could not find title on page: {url}")
+            return None, None
+
+    except Exception as e:
+        logger.error(f"Error parsing {path}: {e}")
         return None, None
-    else:
-        heading = h1.get_text().strip()
-        logger.info(f"Found heading: {heading} at {url}")
-        return heading, url
 
 
 @click.command()
@@ -59,9 +95,9 @@ def build_keyword_list(output, verbose):
 
     keyword_list = []
     for page in keyword_pages:
-        heading, url = parse_keyword_page(page)
-        if heading is not None:
-            keyword_list.append({"heading": heading, "url": url})
+        title, url = parse_keyword_page(page)
+        if title is not None:
+            keyword_list.append({"title": title, "url": url})
 
     with open(output, "w") as f:
         logger.info("Writing keyword list to file")
